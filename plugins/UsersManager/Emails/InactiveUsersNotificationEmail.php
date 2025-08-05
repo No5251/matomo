@@ -9,19 +9,19 @@
 
 namespace Piwik\Plugins\UsersManager\Emails;
 
-use Piwik\Config;
 use Piwik\Mail;
 use Piwik\Piwik;
 use Piwik\Plugins\LanguagesManager\LanguagesHelper;
-use Piwik\Plugins\UsersManager\TokenNotifications\TokenNotification;
+use Piwik\Plugins\UsersManager\Model;
+use Piwik\Plugins\UsersManager\UserNotifications\UserNotification;
 use Piwik\SettingsPiwik;
 use Piwik\Url;
 use Piwik\View;
 
-class AuthTokenRotationNotificationEmail extends Mail
+class InactiveUsersNotificationEmail extends Mail
 {
     /**
-     * @var TokenNotification
+     * @var UserNotification
      */
     private $notification;
 
@@ -31,13 +31,17 @@ class AuthTokenRotationNotificationEmail extends Mail
     /** @var array */
     private $emailData;
 
-    public function __construct(TokenNotification $notification, string $recipient, array $emailData)
+    /** @var Model */
+    private $userModel;
+
+    public function __construct(UserNotification $notification, string $recipient, array $emailData)
     {
         parent::__construct();
 
         $this->notification = $notification;
         $this->recipient = $recipient;
         $this->emailData = $emailData;
+        $this->userModel = new Model();
 
         $this->setUpEmail();
     }
@@ -54,28 +58,21 @@ class AuthTokenRotationNotificationEmail extends Mail
         });
     }
 
-    private function getRotationPeriodPretty(): string
-    {
-        $rotationPeriodDays = Config::getInstance()->General['auth_token_rotation_notification_days'];
-
-        return $rotationPeriodDays . ' ' . Piwik::translate('Intl_PeriodDay' . ($rotationPeriodDays === 1 ? '' : 's'));
-    }
-
-    protected function getManageAuthTokensLink(): string
+    protected function getManageUsersLink(): string
     {
         return SettingsPiwik::getPiwikUrl()
             . 'index.php?'
-            . Url::getQueryStringFromParameters(['module' => 'UsersManager', 'action' => 'userSecurity'])
-            . '#authtokens';
+            . Url::getQueryStringFromParameters(['module' => 'UsersManager', 'action' => 'index']);
     }
+
     protected function getDefaultSubject(): string
     {
-        return Piwik::translate('UsersManager_AuthTokenNotificationEmailSubject');
+        return Piwik::translate('UsersManager_InactiveUsersNotificationEmailSubject');
     }
 
     protected function getDefaultBodyText(): string
     {
-        $view = new View('@UsersManager/_authTokenRotationNotificationTextEmail.twig');
+        $view = new View('@UsersManager/_inactiveUsersNotificationTextEmail.twig');
         $view->setContentType('text/plain');
 
         $this->assignCommonParameters($view);
@@ -85,7 +82,7 @@ class AuthTokenRotationNotificationEmail extends Mail
 
     protected function getDefaultBodyView(): View
     {
-        $view = new View('@UsersManager/_authTokenRotationNotificationHtmlEmail.twig');
+        $view = new View('@UsersManager/_inactiveUsersNotificationHtmlEmail.twig');
 
         $this->assignCommonParameters($view);
 
@@ -94,11 +91,9 @@ class AuthTokenRotationNotificationEmail extends Mail
 
     protected function assignCommonParameters(View $view): void
     {
-        $view->tokenName = $this->notification->getTokenName();
-        $view->tokenCreationDate = $this->notification->getTokenCreationDate();
-
-        $view->rotationPeriod = $this->getRotationPeriodPretty();
-        $view->manageAuthTokensLink = $this->getManageAuthTokensLink();
+        $view->inactiveUsers = $this->notification->getUsers();
+        $view->manageUsersLink = $this->getManageUsersLink();
+        $view->superuserLogin = $this->userModel->getUserByEmail($this->recipient)['login'];
 
         foreach ($this->emailData as $item => $value) {
             $view->assign($item, $value);
