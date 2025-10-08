@@ -5694,16 +5694,6 @@ parameters:
 			path: plugins/PrivacyManager/API.php
 
 		-
-			message: "#^Property Piwik\\\\Plugins\\\\PrivacyManager\\\\Config\\:\\:\\$anonymizeOrderId \\(int\\) does not accept bool\\.$#"
-			count: 1
-			path: plugins/PrivacyManager/API.php
-
-		-
-			message: "#^Property Piwik\\\\Plugins\\\\PrivacyManager\\\\Config\\:\\:\\$anonymizeUserId \\(int\\) does not accept bool\\.$#"
-			count: 1
-			path: plugins/PrivacyManager/API.php
-
-		-
 			message: "#^Binary operation \"\\+\" between non\\-falsy\\-string and int results in an error\\.$#"
 			count: 1
 			path: plugins/PrivacyManager/Controller.php
@@ -6434,7 +6424,7 @@ parameters:
 			path: plugins/UsersManager/API.php
 
 		-
-			message: "#^Parameter \\#1 \\$n of method Piwik\\\\Date\\:\\:addHour\\(\\) expects int, string given\\.$#"
+			message: "#^Parameter \\#1 \\$n of method Piwik\\\\Date\\:\\:addHour\\(\\) expects float\\|int, string given\\.$#"
 			count: 1
 			path: plugins/UsersManager/API.php
 
