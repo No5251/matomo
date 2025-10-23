@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Matomo - free/libre analytics platform
+ *
+ * @link    https://matomo.org
+ * @license https://www.gnu.org/licenses/gpl-3.0.html GPL v3 or later
+ */
+
 namespace Piwik\Plugins\PrivacyManager\Settings;
 
 use Piwik\Piwik;
@@ -7,6 +14,7 @@ use Piwik\Plugins\PrivacyManager\Config;
 use Piwik\Settings\Interfaces\CustomSettingInterface;
 use Piwik\Settings\Interfaces\PolicyComparisonInterface;
 use Piwik\Settings\Interfaces\SettingValueInterface;
+use Piwik\Settings\Interfaces\Traits\Getters\CustomGetterTrait;
 use Piwik\Settings\Interfaces\Traits\PolicyComparisonTrait;
 use Piwik\Policy\CnilPolicy;
 
@@ -23,6 +31,11 @@ class IPAnonymisation implements CustomSettingInterface, PolicyComparisonInterfa
     use PolicyComparisonTrait;
 
     /**
+     * @use CustomGetterTrait<int|null>
+     */
+    use CustomGetterTrait;
+
+    /**
      * @var int|null
      */
     private $value;
@@ -37,10 +50,15 @@ class IPAnonymisation implements CustomSettingInterface, PolicyComparisonInterfa
         return $this->value;
     }
 
+    protected static function getCustomSettingName(): string
+    {
+        return 'ipAnonymizerEnabled';
+    }
+
     public static function getCustomValue(?int $idSite = null)
     {
         // disallowing compliance override to prevent indefinite loop in getting the value
-        return (new Config($idSite))->getFromOption('ipAnonymizerEnabled', $allowPolicyComplianceOverride = false);
+        return (new Config($idSite))->getFromOption(self::getCustomSettingName(), $allowPolicyComplianceOverride = false);
     }
 
     public static function getTitle(): string

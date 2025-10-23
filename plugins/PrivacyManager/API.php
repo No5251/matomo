@@ -272,8 +272,20 @@ class API extends \Piwik\Plugin\API
 
         $privacyConfig = new Config($idSite);
         $settings = [];
+        $extraMetadata = [];
         foreach ($privacyConfig->getConfigPropertyNames() as $propertyName) {
             $settings[$propertyName] = $privacyConfig->{$propertyName};
+
+            // using custom setting type here as config properties use custom getter mechanism
+            $settingType = PolicyManager::SETTING_TYPE_CUSTOM;
+            $compliancePolicyControlled = PolicyManager::getCompliancePoliciesControllingASetting($propertyName, $idSite, $settingType);
+
+            if (!empty($compliancePolicyControlled)) {
+                $extraMetadata[$propertyName] = [
+                    'compliancePolicyControlled' => $compliancePolicyControlled,
+                    'idSite' => $idSite,
+                ];
+            }
         }
         $settings['useSiteSpecificSettings'] = $privacyConfig->useSiteSpecificSettings();
 
@@ -287,6 +299,9 @@ class API extends \Piwik\Plugin\API
             'trackerFileName' => $trackerFilename,
             'trackerWritable' => $trackerFileWritable,
         ]);
+        if (!empty($extraMetadata)) {
+            $settings['extraMetadata'] = $extraMetadata;
+        }
 
         return $settings;
     }

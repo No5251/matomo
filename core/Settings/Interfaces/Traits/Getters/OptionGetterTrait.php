@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Matomo - free/libre analytics platform
+ *
+ * @link    https://matomo.org
+ * @license https://www.gnu.org/licenses/gpl-3.0.html GPL v3 or later
+ */
+
 namespace Piwik\Settings\Interfaces\Traits\Getters;
 
 use Piwik\Option;
@@ -20,4 +27,12 @@ trait OptionGetterTrait
     }
 
     abstract protected static function getOptionName(?int $idSite = null): string;
+
+    /**
+     * @deprecated Will be removed in 6.0 in favour of making getOptionName public
+     */
+    public static function getOptionSettingShortName(): string
+    {
+        return self::getOptionName();
+    }
 }
