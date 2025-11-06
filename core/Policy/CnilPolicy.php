@@ -19,7 +19,7 @@ class CnilPolicy extends CompliancePolicy
         return 'cnil_v1';
     }
 
-    public static function getDescription(): string
+    public static function generateDescription(): string
     {
         return Piwik::translate('General_ComplianceCNILDescription');
     }

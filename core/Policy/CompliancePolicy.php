@@ -41,8 +41,17 @@ abstract class CompliancePolicy implements SystemSettingInterface, MeasurableSet
     use ConfigGetterTrait;
 
     abstract public static function getName(): string;
-    abstract public static function getDescription(): string;
     abstract public static function getTitle(): string;
+    abstract protected static function generateDescription(): string;
+
+    public static function getDescription(): string
+    {
+        $description = static::generateDescription();
+
+        Piwik::postEvent('CompliancePolicy.updatePolicyDescription', [&$description, static::class]);
+
+        return $description;
+    }
 
     /**
      * @return array<array<string>> of [['title' => (string) 'TITLE', 'note' => (string) 'NOTE']]
