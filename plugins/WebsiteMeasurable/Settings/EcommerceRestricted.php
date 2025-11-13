@@ -1,21 +1,21 @@
 <?php
 
-namespace Piwik\Plugins\Resolution\Settings;
+namespace Piwik\Plugins\WebsiteMeasurable\Settings;
 
 use Piwik\Piwik;
 use Piwik\Plugins\PrivacyManager\Settings\CompliancePolicyEnforcedSetting;
 use Piwik\Policy\CnilPolicy;
 
-class ScreenResolutionDetectionDisabled extends CompliancePolicyEnforcedSetting
+class EcommerceRestricted extends CompliancePolicyEnforcedSetting
 {
     public static function getTitle(): string
     {
-        return Piwik::translate('Resolution_ScreenResolutionDetectionDisabled');
+        return Piwik::translate('Goals_Ecommerce');
     }
 
     public static function getComplianceRequirementNote(?int $idSite = null): string
     {
-        return Piwik::translate('Resolution_ScreenResolutionDetectionDisabledRequirementNote');
+        return Piwik::translate('WebsiteMeasurable_EcommercePolicySettingRequirementNote');
     }
 
     public static function getPolicyRequirements(): array
