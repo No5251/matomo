@@ -160,6 +160,7 @@ Segmentation = (function($) {
                 segmentationTitle.text(title);
                 this.setTooltip(title);
             }
+            window.CoreHome.MatomoUrl.updatePageTitle();
         };
 
         function handleAddNewSegment() {
